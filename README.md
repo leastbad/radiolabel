@@ -39,7 +39,7 @@ Here is a simple example:
 
 ### Credit where credit is due
 
-I don't know who wrote the original image-grid.js library. It shipped with a lot of Bootstrap themes, but it relied on jQuery. While stimulus-image-grid is an improvement on the original in several significant ways, the actual meat and potatoes of the algorithm is 100% adapted from the code of a stranger. If you know who wrote [image-grid.js](https://github.com/Pactum/pactum.io/blob/9f2d162bc21f26d62c5d4ba801309bdeb8b9fa9e/v4/js/custom/image-grid.js), please let me know!
+I don't know who wrote the original image-grid.js library. It shipped with a bunch of premium Bootstrap themes, but it relied on jQuery. While stimulus-image-grid is an improvement on the original in several significant ways, the actual meat and potatoes of the algorithm is 100% adapted from the code of a stranger. If you know who wrote [image-grid.js](https://github.com/Pactum/pactum.io/blob/9f2d162bc21f26d62c5d4ba801309bdeb8b9fa9e/v4/js/custom/image-grid.js), please let me know!
 
 ## Setup
 
@@ -64,7 +64,7 @@ application.register('image-grid', ImageGrid)
 
 ## HTML Markup
 
-For the image grid to work properly, it needs to get the raw image sizes. You can either set the `data-width` and `data-height` attributes, or the library will calculate the size when it loads. This is slower and could cause a flicker, but it will only happen once - even across Turbolinks visits.
+For the image grid to work properly, it needs the raw image dimensions. If you know the dimensions at render time, set the `data-width` and `data-height` attributes. Otherwise, the library will calculate the size when it loads. This is slower and could cause a flicker, but it will only happen once - even across Turbolinks visits.
 
 ```html
 <div data-controller="image-grid">
@@ -76,7 +76,7 @@ For the image grid to work properly, it needs to get the raw image sizes. You ca
 </div>
 ```
 
-The library tries really hard to not be opinionated about HTML structure. The basic idea is that every child of the containers which has the image-grid controller declared will have zero or one images, somewhere in its DOM hierarchy. So for example, you could have a scenario where images are wrapped in DIV tags and it will find the image in the hierarchy:
+The library tries really hard to not be opinionated about HTML structure. The basic idea is that every child of the container element that has the image-grid controller declared upon it will have [zero or one] image(s), somewhere in its DOM hierarchy. So for example, you could have a scenario where images are wrapped in DIV tags and it will find [zero or one] image(s) in the hierarchy:
 
 ```html
 <div data-controller="image-grid">
@@ -98,21 +98,29 @@ The library tries really hard to not be opinionated about HTML structure. The ba
 </div>
 ```
 
+This library is fully responsive in that it will automatically re-flow the images to the ideal layout in real-time as the container it lives in changes size. If you're using a CSS library such as Bootstrap, this is usually managed with the [responsive breakpoint classes](https://getbootstrap.com/docs/4.4/layout/grid/#grid-options).
+
 ## Optional Parameters
 
-There are only three configurable properties, all of which are set on the DOM element using data attributes.
+There are only three configurable properties, all of which are set on the DOM element using data attributes:
 
 Property | Default Value
 -------- | -------------
 padding | 10
-targetHeight | 300
+targetHeight | 150
 display | inline-block
 
 ```html
-<div data-controller="image-grid" data-image-grid-padding-value="5" data-image-grid-target-height-value="150" data-image-grid-display-value="150">
+<div
+  data-controller="image-grid"
+  data-image-grid-padding-value="10"
+  data-image-grid-target-height-value="150"
+  data-image-grid-display-value="inline-block">
   ...
 </div>
 ```
+
+Padding is applied to the bottom of each image as well as the right edge of each image *that isn't the right-most image of its row*. Target height is applied to the row and you can tweak this value to suit the look of your application.
 
 ### Obtaining a reference to the Stimulus controller instance
 

@@ -133,7 +133,7 @@ let _default = /*#__PURE__*/function (_Controller) {
       this.element['imageGrid'] = this;
       Array.prototype.filter.call(this.element.childNodes, node => node.nodeType == 3 && !/\S/.test(node.nodeValue)).forEach(node => node.remove());
       if (!this.hasPaddingValue) this.paddingValue = 10;
-      if (!this.hasTargetHeightValue) this.targetHeightValue = 300;
+      if (!this.hasTargetHeightValue) this.targetHeightValue = 150;
       if (!this.hasDisplayValue) this.displayValue = 'inline-block';
       this.resizeObserver = new ResizeObserver(this.observed.bind(this));
     }

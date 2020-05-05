@@ -16,7 +16,7 @@ export default class extends Controller {
       )
       .forEach(node => node.remove())
     if (!this.hasPaddingValue) this.paddingValue = 10
-    if (!this.hasTargetHeightValue) this.targetHeightValue = 300
+    if (!this.hasTargetHeightValue) this.targetHeightValue = 150
     if (!this.hasDisplayValue) this.displayValue = 'inline-block'
     this.resizeObserver = new ResizeObserver(this.observed.bind(this))
   }
