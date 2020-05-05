@@ -20,7 +20,7 @@
 - **Turbolinks**: compatible with Turbolinks by design
 - **MIT Licensed**: free for personal and commercial use
 
-[![Youtube](http://img.youtube.com/vi/SVaAzpX86E0/0.jpg)](http://www.youtube.com/watch?v=http://img.youtube.com/vi/SVaAzpX86E0/0.jpg "Stimulus Image Grid")
+[![Youtube](http://img.youtube.com/vi/SVaAzpX86E0/0.jpg)](http://www.youtube.com/watch?v=SVaAzpX86E0 "Stimulus Image Grid")
 
 ## Built for StimulusJS
 
