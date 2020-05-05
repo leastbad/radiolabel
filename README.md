@@ -20,6 +20,8 @@
 - **Turbolinks**: compatible with Turbolinks by design
 - **MIT Licensed**: free for personal and commercial use
 
+[![Youtube](http://img.youtube.com/vi/SVaAzpX86E0/0.jpg)](http://www.youtube.com/watch?v=http://img.youtube.com/vi/SVaAzpX86E0/0.jpg "Stimulus Image Grid")
+
 ## Built for StimulusJS
 
 This [Stimulus](https://stimulusjs.org/) controller allows you to make any configurations for the image grid directly with the `data-attributes` of your HTML. Once registered in your Stimulus application, you can use it anywhere you like.
