@@ -79,7 +79,7 @@ For the image grid to work properly, it needs the raw image dimensions. If you k
 The library tries really hard to not be opinionated about HTML structure. The basic idea is that every child of the container element that has the image-grid controller declared upon it will have [zero or one] image(s), somewhere in its DOM hierarchy. So for example, you could have a scenario where images are wrapped in DIV tags and it will find [zero or one] image(s) in the hierarchy:
 
 ```html
-<div data-controller="image-grid">
+<div data-controller="image-grid" class="col-md-6 col-lg-4 col-xl-3">
   <div>
     <img data-width="350" data-height="300" src="https://placehold.it/350x300/EEE04A/ffffff">
   </div>
