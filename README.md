@@ -7,7 +7,7 @@
 
 <p align="center">
   <b>A Stimulus controller for beautiful image grids</b></br>
-  <sub>Tiny at <100 LOC <sub>
+  <sub>Tiny at &lt;100 LOC </sub>
 </p>
 
 <br />
