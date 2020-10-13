@@ -1,6 +1,6 @@
 {
   "name": "radiolabel",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Mutation indicator overlays for CableReady operations",
   "keywords": [
     "stimulusjs",
@@ -31,7 +31,7 @@
   "dependencies": {
     "cable_ready": "^4.4.0-pre1",
     "gsap": "^3.5.1",
-    "stimulus": "https://github.com/stimulusjs/dev-builds/archive/b8cc8c4/stimulus.tar.gz"
+    "stimulus": "1.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.6.2",
