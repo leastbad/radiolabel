@@ -1,14 +1,13 @@
 {
-  "name": "stimulus-image-grid",
-  "version": "1.0.2",
-  "description": "A Stimulus controller for beautiful responsive image grids",
+  "name": "radiolabel",
+  "version": "1.0.0",
+  "description": "Mutation indicator overlays for CableReady operations",
   "keywords": [
-    "stimulus",
     "stimulusjs",
-    "bootstrap",
-    "image",
-    "grid",
-    "responsive"
+    "cableready",
+    "rails",
+    "development",
+    "overlay"
   ],
   "main": "dist/index.js",
   "umd:main": "dist/index.umd.js",
@@ -25,11 +24,13 @@
     "dev": "rollup -wc",
     "release": "np"
   },
-  "homepage": "https://image-grid.leastbad.com/",
+  "homepage": "https://leastbad.com/",
   "bugs": {
-    "url": "https://github.com/leastbad/stimulus-image-grid/issues"
+    "url": "https://github.com/leastbad/radiolabel/issues"
   },
   "dependencies": {
+    "cable_ready": "^4.4.0-pre1",
+    "gsap": "^3.5.1",
     "stimulus": "https://github.com/stimulusjs/dev-builds/archive/b8cc8c4/stimulus.tar.gz"
   },
   "devDependencies": {
@@ -48,6 +49,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/leastbad/stimulus-image-grid.git"
+    "url": "https://github.com/leastbad/radiolabel.git"
   }
 }

@@ -1,94 +1,94 @@
 import { Controller } from 'stimulus'
+import CableReady from 'cable_ready'
+import { gsap } from 'gsap'
+
+const dasherize = string => {
+  return string.replace(/[A-Z]/g, function (char, index) {
+    return (index !== 0 ? '-' : '') + char.toLowerCase()
+  })
+}
 
 export default class extends Controller {
-  static values = {
-    padding: Number,
-    targetHeight: Number,
-    display: String
-  }
-
   initialize () {
-    this.element['imageGrid'] = this
-    Array.prototype.filter
-      .call(
-        this.element.childNodes,
-        node => node.nodeType == 3 && !/\S/.test(node.nodeValue)
-      )
-      .forEach(node => node.remove())
-    if (!this.hasPaddingValue) this.paddingValue = 10
-    if (!this.hasTargetHeightValue) this.targetHeightValue = 150
-    if (!this.hasDisplayValue) this.displayValue = 'inline-block'
-    this.resizeObserver = new ResizeObserver(this.observed.bind(this))
-  }
-
-  observed (elements) {
-    this.albumWidth = elements[0].contentRect.width
-    this.processImages()
+    this.operations = Object.keys(CableReady.DOMOperations).map(key =>
+      dasherize(key)
+    )
   }
 
   connect () {
-    this.resizeObserver.observe(this.element)
+    this.operations.forEach(operation =>
+      document.addEventListener(
+        `cable-ready:after-${operation}`,
+        this.intercept
+      )
+    )
   }
 
   disconnect () {
-    this.resizeObserver.unobserve(this.element)
+    this.operations.forEach(operation =>
+      document.removeEventListener(
+        `cable-ready:after-${operation}`,
+        this.intercept
+      )
+    )
   }
 
-  processImages () {
-    let row = 0
-    this.elements = []
-    this.images = Array.from(this.element.children)
-    this.images.forEach((ele, index) => {
-      const image = ele.nodeName === 'IMG' ? ele : ele.querySelector('img')
-      let width, height
-      if ('width' in image.dataset && 'height' in image.dataset) {
-        width = image.dataset.width
-        height = image.dataset.height
-      } else {
-        const comp = window.getComputedStyle(image)
-        width = parseFloat(comp.getPropertyValue('width').slice(0, -2))
-        height = parseFloat(comp.getPropertyValue('height').slice(0, -2))
-        image.dataset.width = width
-        image.dataset.height = height
-      }
-      const idealW = Math.ceil((width / height) * this.targetHeightValue)
-      const idealH = Math.ceil(this.targetHeightValue)
-      this.elements.push([ele, idealW, idealH])
-      row += idealW + this.paddingValue
-      if (row > this.albumWidth && this.elements.length) {
-        this.resizeRow(row - this.paddingValue)
-        row = 0
-        this.elements = []
-      }
-      if (this.images.length - 1 == index && this.elements.length) {
-        this.resizeRow(row)
-        row = 0
-        this.elements = []
-      }
-    }, this)
-  }
+  intercept = ({ detail, target, type }) => {
+    if (target !== document) {
+      const style = getComputedStyle(target)
+      const border = style.getPropertyValue('border')
+      const title = document.createElement('div')
+      const overlay = document.createElement('div')
 
-  resizeRow (row) {
-    const imageExtras = this.paddingValue * (this.elements.length - 1)
-    const albumWidthAdjusted = this.albumWidth - imageExtras
-    const overPercent = albumWidthAdjusted / (row - imageExtras)
-    let trackWidth = imageExtras
-    this.elements.forEach((element, index) => {
-      const [ele, idealW, idealH] = element
-      let fw = Math.floor(idealW * overPercent)
-      let fh = Math.floor(idealH * overPercent)
-      const isNotLast = index < this.elements.length - 1
-      trackWidth += fw
-      if (!isNotLast && trackWidth < this.albumWidth)
-        fw += this.albumWidth - trackWidth
-      fw--
-      const image = ele.nodeName === 'IMG' ? ele : ele.querySelector('img')
-      image.style.width = fw + 'px'
-      image.style.height = fh + 'px'
-      ele.style.marginBottom = this.paddingValue + 'px'
-      ele.style.marginRight = isNotLast ? this.paddingValue + 'px' : 0
-      ele.style.display = this.displayValue
-      ele.style.verticalAlign = 'bottom'
-    }, this)
+      setTimeout(() => {
+        const target_rect = target.getBoundingClientRect()
+        const rect =
+          target === document.body ? { top: 56, left: 0 } : target_rect
+
+        title.style.cssText = `position:absolute;z-index:5001;top:${rect.top -
+          56}px;left:${
+          rect.left
+        }px;background-color:#fff;padding: 3px 8px 3px 8px;border: 1px solid #000;`
+
+        title.innerHTML = `${
+          type.split('after-')[1]
+        } <b>${(detail.stimulusReflex && detail.stimulusReflex.target) ||
+          ''}</b> \u2192 ${(detail.stimulusReflex &&
+          detail.stimulusReflex.selectors[0]) ||
+          (target.id && `#${target.id}`) ||
+          target.classList.toString()}<br><small>${(detail.stimulusReflex &&
+          detail.stimulusReflex.reflexId) ||
+          ''}</small>`
+
+        overlay.style.cssText = `position:absolute;z-index:5000;top:${
+          target_rect.top
+        }px;left:${target_rect.left}px;width:${target_rect.width}px;height:${
+          target_rect.height
+        }px;background-color: ${
+          type === 'cable-ready:after-morph' ? '#FF9800' : '#0F0'
+        };`
+
+        overlay.style.border = border
+
+        document.body.appendChild(title)
+        document.body.appendChild(overlay)
+
+        gsap.fromTo(
+          overlay,
+          {
+            opacity: 1.0
+          },
+          {
+            opacity: 0,
+            duration: 5,
+            ease: 'expo',
+            onComplete: () => {
+              title.remove()
+              overlay.remove()
+            }
+          }
+        )
+      })
+    }
   }
 }
