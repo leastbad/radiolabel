@@ -28,7 +28,11 @@ If an operation was initiated by [StimulusReflex](https://docs.stimulusreflex.co
 
 ## Setup
 
-Add Radiolabel to your main JS entry point or Stimulus controllers root folder:
+First, add Radiolabel to your `package.json`:
+
+yarn add radiolabel
+
+Then, just add Radiolabel to your main JS entry point or Stimulus controllers root folder:
 
 ```js
 import { Application } from 'stimulus'
