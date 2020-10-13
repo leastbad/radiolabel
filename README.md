@@ -30,7 +30,7 @@ If an operation was initiated by [StimulusReflex](https://docs.stimulusreflex.co
 
 First, add Radiolabel to your `package.json`:
 
-yarn add radiolabel
+`yarn add radiolabel`
 
 Then, just add Radiolabel to your main JS entry point or Stimulus controllers root folder:
 
