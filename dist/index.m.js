@@ -6467,19 +6467,27 @@ let _default = /*#__PURE__*/function (_Controller) {
       type
     }) => {
       if (target !== document) {
+        const body = target === document.body;
         const style = getComputedStyle(target);
         const border = style.getPropertyValue('border');
         const title = document.createElement('div');
         const overlay = document.createElement('div');
+        const eventType = type.split('after-')[1];
+        const color = eventType === 'morph' ? '#FF9800' : '#0F0';
+        const d = detail.stimulusReflex;
+        const titleTarget = d && d.target || '';
+        const reflexId = d && d.reflexId || '';
         setTimeout(() => {
-          const target_rect = target.getBoundingClientRect();
-          const rect = target === document.body ? {
+          const t_rect = target.getBoundingClientRect();
+          const rect = body ? {
             top: 56,
             left: 0
-          } : target_rect;
-          title.style.cssText = `position:absolute;z-index:5001;top:${rect.top - 56}px;left:${rect.left}px;background-color:#fff;padding: 3px 8px 3px 8px;border: 1px solid #000;`;
-          title.innerHTML = `${type.split('after-')[1]} <b>${detail.stimulusReflex && detail.stimulusReflex.target || ''}</b> \u2192 ${detail.stimulusReflex && detail.stimulusReflex.selectors[0] || target.id && `#${target.id}` || target.classList.toString()}<br><small>${detail.stimulusReflex && detail.stimulusReflex.reflexId || ''}</small>`;
-          overlay.style.cssText = `position:absolute;z-index:5000;top:${target_rect.top}px;left:${target_rect.left}px;width:${target_rect.width}px;height:${target_rect.height}px;background-color: ${type === 'cable-ready:after-morph' ? '#FF9800' : '#0F0'};`;
+          } : t_rect;
+          const titleTop = rect.top - 56 + Math.round(scrollY);
+          const oTop = body ? 0 : t_rect.top + Math.round(scrollY);
+          title.style.cssText = `position:absolute;z-index:5001;top:${titleTop}px;left:${rect.left}px;background-color:#fff;padding: 3px 8px 3px 8px;border: 1px solid #000;pointer-events: none;`;
+          title.innerHTML = `${eventType} <b>${titleTarget}</b> \u2192 ${detail.selector}<br><small>${reflexId}</small>`;
+          overlay.style.cssText = `position:absolute;z-index:5000;top:${oTop}px;left:${t_rect.left}px;width:${t_rect.width}px;height:${t_rect.height}px;background-color: ${color};pointer-events: none;`;
           overlay.style.border = border;
           document.body.appendChild(title);
           document.body.appendChild(overlay);
@@ -6487,7 +6495,7 @@ let _default = /*#__PURE__*/function (_Controller) {
             opacity: 1.0
           }, {
             opacity: 0,
-            duration: 5,
+            duration: 7,
             ease: 'expo',
             onComplete: () => {
               title.remove();
