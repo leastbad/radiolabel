@@ -896,10 +896,15 @@
   var morphdom = morphdomFactory(morphAttrs);
 
   let activeElement;
-  const textInputTagNames = {
+  const inputTags = {
     INPUT: true,
     TEXTAREA: true,
     SELECT: true
+  };
+  const mutableTags = {
+    INPUT: true,
+    TEXTAREA: true,
+    OPTION: true
   };
   const textInputTypes = {
     'datetime-local': true,
@@ -924,16 +929,17 @@
   //
 
   const isTextInput = element => {
-    return textInputTagNames[element.tagName] && textInputTypes[element.type];
-  }; // Assigns focus to the appropriate element... preferring the explicitly passed focusSelector
+    return inputTags[element.tagName] && textInputTypes[element.type];
+  }; // Assigns focus to the appropriate element... preferring the explicitly passed selector
   //
-  // * focusSelector - a CSS selector for the element that should have focus
+  // * selector - a CSS selector for the element that should have focus
   //
 
 
-  const assignFocus = focusSelector => {
-    const focusElement = focusSelector ? document.querySelector(focusSelector) : activeElement;
-    if (focusElement) focusElement.focus();
+  const assignFocus = selector => {
+    const element = selector && selector.nodeType === Node.ELEMENT_NODE ? selector : document.querySelector(selector);
+    const focusElement = element || activeElement;
+    if (focusElement && focusElement.focus) focusElement.focus();
   }; // Dispatches an event on the passed element
   //
   // * element - the element
@@ -945,11 +951,12 @@
   const dispatch = (element, name, detail = {}) => {
     const init = {
       bubbles: true,
-      cancelable: true
+      cancelable: true,
+      detail: detail
     };
-    const evt = new Event(name, init);
-    evt.detail = detail;
+    const evt = new CustomEvent(name, init);
     element.dispatchEvent(evt);
+    if (window.jQuery) window.jQuery(element).trigger(name, detail);
   };
 
   const xpathToElement = xpath => {
@@ -968,7 +975,7 @@
   const shouldMorph = permanentAttributeName => (fromEl, toEl) => {
     // Skip nodes that are equal:
     // https://github.com/patrick-steele-idem/morphdom#can-i-make-morphdom-blaze-through-the-dom-tree-even-faster-yes
-    if (fromEl.isEqualNode(toEl)) return false;
+    if (!mutableTags[fromEl.tagName] && fromEl.isEqualNode(toEl)) return false;
     if (!permanentAttributeName) return true;
     const permanent = fromEl.closest(`[${permanentAttributeName}]`); // only morph attributes on the active non-permanent text input
 
@@ -997,6 +1004,37 @@
       dispatch(document, 'cable-ready:before-push-state', config);
       history.pushState(state || {}, title || '', url);
       dispatch(document, 'cable-ready:after-push-state', config);
+    },
+    // Storage .................................................................................................
+    setStorageItem: config => {
+      const {
+        key,
+        value,
+        type
+      } = config;
+      const storage = type === 'session' ? sessionStorage : localStorage;
+      dispatch(document, 'cable-ready:before-set-storage-item', config);
+      storage.setItem(key, value);
+      dispatch(document, 'cable-ready:after-set-storage-item', config);
+    },
+    removeStorageItem: config => {
+      const {
+        key,
+        type
+      } = config;
+      const storage = type === 'session' ? sessionStorage : localStorage;
+      dispatch(document, 'cable-ready:before-remove-storage-item', config);
+      storage.removeItem(key);
+      dispatch(document, 'cable-ready:after-remove-storage-item', config);
+    },
+    clearStorage: config => {
+      const {
+        type
+      } = config;
+      const storage = type === 'session' ? sessionStorage : localStorage;
+      dispatch(document, 'cable-ready:before-clear-storage', config);
+      storage.clear();
+      dispatch(document, 'cable-ready:after-clear-storage', config);
     },
     // Notifications ...........................................................................................
     consoleLog: config => {
@@ -1094,10 +1132,12 @@
     textContent: detail => {
       const {
         element,
-        text
+        text,
+        focusSelector
       } = detail;
       dispatch(element, 'cable-ready:before-text-content', detail);
       element.textContent = text;
+      assignFocus(focusSelector);
       dispatch(element, 'cable-ready:after-text-content', detail);
     },
     insertAdjacentHtml: detail => {
@@ -1117,10 +1157,12 @@
       const {
         element,
         text,
-        position
+        position,
+        focusSelector
       } = detail;
       dispatch(element, 'cable-ready:before-insert-adjacent-text', detail);
       element.insertAdjacentText(position || 'beforeend', text);
+      assignFocus(focusSelector);
       dispatch(element, 'cable-ready:after-insert-adjacent-text', detail);
     },
     remove: detail => {
@@ -1137,11 +1179,10 @@
     setFocus: detail => {
       activeElement = document.activeElement;
       const {
-        element,
-        focusSelector
+        element
       } = detail;
       dispatch(element, 'cable-ready:before-set-focus', detail);
-      assignFocus(focusSelector);
+      assignFocus(element);
       dispatch(element, 'cable-ready:after-set-focus', detail);
     },
     setProperty: detail => {
@@ -1157,10 +1198,12 @@
     setValue: detail => {
       const {
         element,
-        value
+        value,
+        focusSelector
       } = detail;
       dispatch(element, 'cable-ready:before-set-value', detail);
       element.value = value;
+      assignFocus(focusSelector);
       dispatch(element, 'cable-ready:after-set-value', detail);
     },
     // Attribute Mutations .....................................................................................
@@ -6499,7 +6542,7 @@
               opacity: 1.0
             }, {
               opacity: 0,
-              duration: 7,
+              duration: _this.duration,
               ease: 'expo',
               onComplete: () => {
                 title.remove();
@@ -6517,6 +6560,7 @@
       key: "initialize",
       value: function initialize() {
         this.operations = Object.keys(CableReady.DOMOperations).map(key => dasherize(key));
+        this.duration = 7;
       }
     }, {
       key: "connect",
@@ -6528,10 +6572,19 @@
       value: function disconnect() {
         this.operations.forEach(operation => document.removeEventListener(`cable-ready:after-${operation}`, this.intercept));
       }
+    }, {
+      key: "durationValueChanged",
+      value: function durationValueChanged() {
+        this.duration = this.durationValue;
+      }
     }]);
 
     return _default;
   }(stimulus.Controller);
+
+  _defineProperty(_default, "values", {
+    duration: Number
+  });
 
   return _default;
 

@@ -9,10 +9,13 @@ const dasherize = string => {
 }
 
 export default class extends Controller {
+  static values = { duration: Number }
+
   initialize () {
     this.operations = Object.keys(CableReady.DOMOperations).map(key =>
       dasherize(key)
     )
+    this.duration = 7
   }
 
   connect () {
@@ -31,6 +34,10 @@ export default class extends Controller {
         this.intercept
       )
     )
+  }
+
+  durationValueChanged () {
+    this.duration = this.durationValue
   }
 
   intercept = ({ detail, target, type }) => {
@@ -68,7 +75,7 @@ export default class extends Controller {
           },
           {
             opacity: 0,
-            duration: 7,
+            duration: this.duration,
             ease: 'expo',
             onComplete: () => {
               title.remove()

@@ -71,6 +71,14 @@ If Stimulus can't locate a controller at runtime, the `data-controller` attribut
 ```html
 <body data-controller="radiolabel"></body>
 ```
+
+If you'd like to change the default 7 second visual effect duration, just set a new value on the same element that the
+controller is defined on.
+
+```html
+<body data-controller="radiolabel" data-radiolabel-duration-value="2"></body>
+```
+
 <tiny>Yes, that's really it.</tiny>
 
 ## Contributing
