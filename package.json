@@ -1,14 +1,8 @@
 {
   "name": "radiolabel",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Mutation indicator overlays for CableReady operations",
-  "keywords": [
-    "stimulusjs",
-    "cableready",
-    "rails",
-    "development",
-    "overlay"
-  ],
+  "keywords": ["stimulusjs", "cableready", "rails", "development", "overlay"],
   "main": "dist/index.js",
   "umd:main": "dist/index.umd.js",
   "module": "dist/index.m.js",
@@ -29,9 +23,9 @@
     "url": "https://github.com/leastbad/radiolabel/issues"
   },
   "dependencies": {
-    "cable_ready": "^4.4.5",
-    "gsap": "^3.5.1",
-    "stimulus": "^2.0.0"
+    "cable_ready": ">=4.5.0",
+    "gsap": "^3.8.0",
+    "stimulus": ">=2.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.6.2",
